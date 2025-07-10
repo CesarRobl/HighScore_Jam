@@ -1,1 +1,8 @@
 //Ignore!!!
+
+HighscoreJam/Saved/
+HighscoreJam/Binaries/
+HighscoreJam/Intermediate/
+HighscoreJam/.vsconfig
+HighscoreJam/.idea/
+HighscoreJam/.vs/
