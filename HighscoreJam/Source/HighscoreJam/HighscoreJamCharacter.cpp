@@ -136,8 +136,8 @@ void AHighscoreJamCharacter::Shoot()
 
 	FVector End = PlayerLocation + (PlayerRotation.Vector() * 1000.0f);
 
-	float CapsuleRadius = 10.0f;
-	float CapsuleHalfHeight = 10.0f;
+	float CapsuleRadius = PlayerStats.CapsuleRadius;
+	float CapsuleHalfHeight = PlayerStats.CapsuleHalfHeight;
 	FCollisionShape CollisionShape = FCollisionShape::MakeCapsule(CapsuleRadius, CapsuleHalfHeight);
 
 	TArray<FHitResult> HitResults;

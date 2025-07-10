@@ -7,6 +7,22 @@
 #include "Logging/LogMacros.h"
 #include "HighscoreJamCharacter.generated.h"
 
+
+// Declare the struct before the class
+USTRUCT(BlueprintType)
+struct FPlayerStats {
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 Health = 10;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float CapsuleRadius = 10.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float CapsuleHalfHeight = 10.0f;
+};
+
 class USpringArmComponent;
 class UCameraComponent;
 class UInputMappingContext;
@@ -47,6 +63,8 @@ class AHighscoreJamCharacter : public ACharacter
 public:
 	AHighscoreJamCharacter();
 	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player Stats")
+	FPlayerStats PlayerStats;
 
 
 protected:
