@@ -8,13 +8,22 @@
 #include "HighscoreJamCharacter.generated.h"
 
 
-// Declare the struct before the class
+
 USTRUCT(BlueprintType)
 struct FPlayerStats {
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 Health = 10;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Water = 50.0f;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	float WaterDrainRate = 1.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float WaterRefillRate = 2.5f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float CapsuleRadius = 10.0f;
@@ -62,10 +71,12 @@ class AHighscoreJamCharacter : public ACharacter
 
 public:
 	AHighscoreJamCharacter();
+
+	virtual void Tick(float DeltaTime) override;
+	virtual void BeginPlay() override;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player Stats")
 	FPlayerStats PlayerStats;
-
 
 protected:
 
@@ -77,8 +88,16 @@ protected:
 	
 	UFUNCTION(BlueprintCallable)
 	void Shoot();
-			
 
+	//** Called when the player is choked (e.g., out of water) */
+	void Choke();
+
+	float WaterCapacity = 100.0f; // Maximum water capacity
+	float ChokeDelay = 0.0f; // Delay before choking starts
+	bool bIsRefilling = false; // Flag to check if refilling is in progress
+	
+
+	
 protected:
 
 	virtual void NotifyControllerChanged() override;
@@ -90,6 +109,23 @@ public:
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+
+	UFUNCTION(BlueprintCallable)
+	virtual void RefillWater() 
+	{
+		bIsRefilling = true;
+		PlayerStats.Water += GetWorld()->GetDeltaSeconds() * PlayerStats.WaterRefillRate;
+		if (PlayerStats.Water >= WaterCapacity) {
+			PlayerStats.Water = WaterCapacity; // Ensure water does not exceed capacity
+		}
+		UE_LOG(LogTemplateCharacter, Log, TEXT("Water refilled! Current water: %f"), PlayerStats.Water);
+	}
+
+	UFUNCTION(BlueprintCallable)
+	void SetRefillState(bool bRefilling)
+	{
+		bIsRefilling = bRefilling;
+	}
 };
 
 

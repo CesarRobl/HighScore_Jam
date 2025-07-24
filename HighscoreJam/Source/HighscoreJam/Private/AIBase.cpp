@@ -2,26 +2,33 @@
 
 
 #include "AIBase.h"
+#include "Kismet/GameplayStatics.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
 AAIBase::AAIBase()
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+ 	// Set this character to call Tick() every frame  .You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
 }
 
 // Called when the game starts or when spawned
 void AAIBase::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	SavedDelay = LaserDelay; // Initialize the saved delay time
+	TargetCharacter = Cast<ACharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0)); // Get the player character as the target
 }
 
 // Called every frame
 void AAIBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if(AIStats.Health <= 0)
+	{
+		Die();
+	}
 
 }
 
@@ -34,6 +41,48 @@ void AAIBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 void AAIBase::TakeDamage() 
 {
+	LaserDelay -= GetWorld()->GetDeltaSeconds();
 
+	if(LaserDelay <= 0.0f)
+	{
+		AIStats.Health -= AIStats.Damage; // Reduce health by damage amount
+		LaserDelay = SavedDelay; // Reset the delay
+		UE_LOG(LogTemp, Warning, TEXT("AI took damage! Health: %d"), AIStats.Health);
+	}
+}
+
+void AAIBase::Die() 
+{
+	UE_LOG(LogTemp, Warning, TEXT("AI has died!"));
+
+	USkeletalMeshComponent* MeshComp = GetMesh();
+	if(MeshComp)
+	{
+		MeshComp->SetSimulatePhysics(true);
+		MeshComp->SetCollisionProfileName(TEXT("Ragdoll"));
+	}
+
+	GetCharacterMovement()->DisableMovement();
+}
+
+void AAIBase::AttackTarget()
+{
+	if (TargetCharacter && DistanceToTarget() <= AttackRange && !bIsAttacking)
+	{
+		// Perform attack logic here, e.g., apply damage to the target character
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("AI is attacking"));
+
+		bIsAttacking = true;
+		PlayAnimMontage(AttackMontage);
+		GetCharacterMovement()->MaxWalkSpeed = AIStats.AttackWalkSpeed;
+
+		GetWorldTimerManager().SetTimer(
+			AttackTimerHandle,
+			this,
+			&AAIBase::ResetAttackState,
+			AttackCooldown,
+			false
+		);
+	}
 }
 

@@ -1,6 +1,7 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "HighscoreJamCharacter.h"
+#include "AIbase.h"
 #include "Engine/LocalPlayer.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -52,6 +53,34 @@ AHighscoreJamCharacter::AHighscoreJamCharacter()
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
+}
+
+void AHighscoreJamCharacter::BeginPlay()
+{
+	// Call the base class BeginPlay() function
+	Super::BeginPlay();
+
+	WaterCapacity = 50.0f; // Set the maximum water capacity
+}
+
+void AHighscoreJamCharacter::Tick(float DeltaTime)
+{
+	// Call the base class Tick() function
+	Super::Tick(DeltaTime);
+	// Update player stats
+	if (PlayerStats.Water > 0.0f && !bIsRefilling)
+	{
+		PlayerStats.Water -= DeltaTime * PlayerStats.WaterDrainRate;
+	}
+	else if(PlayerStats.Water <= 0.0f)
+	{
+		Choke();
+	}
+	if (PlayerStats.Health <= 0.0f)
+	{
+		// Handle player death logic here
+		UE_LOG(LogTemplateCharacter, Warning, TEXT("Player has died!"));
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -130,6 +159,8 @@ void AHighscoreJamCharacter::Look(const FInputActionValue& Value)
 
 void AHighscoreJamCharacter::Shoot() 
 {
+	PlayerStats.Water -= GetWorld()->GetDeltaSeconds();
+
 	FVector PlayerLocation;
 	FRotator PlayerRotation;
 	Controller->GetPlayerViewPoint(PlayerLocation, PlayerRotation);
@@ -140,37 +171,37 @@ void AHighscoreJamCharacter::Shoot()
 	float CapsuleHalfHeight = PlayerStats.CapsuleHalfHeight;
 	FCollisionShape CollisionShape = FCollisionShape::MakeCapsule(CapsuleRadius, CapsuleHalfHeight);
 
+
 	TArray<FHitResult> HitResults;
 
 	bool bHit = GetWorld()->SweepMultiByChannel(
 		HitResults,
-		PlayerLocation,
+		GetActorLocation(),
 		End,
 		FQuat::Identity,
 		ECC_Visibility,
 		CollisionShape
 	);
 
-	// Debug: Visualize the capsule sweep
-	//DrawDebugCapsule(
-	//	GetWorld(),
-	//	PlayerLocation, // Start location
-	//	CapsuleHalfHeight,
-	//	CapsuleRadius,
-	//	FQuat::Identity, // No rotation
-	//	FColor::Blue,
-	//	false,
-	//	1.0f // Duration
-	//);
+	if (bHit)
+	{
+		for (const FHitResult& Hit : HitResults)
+		{
+			
+			if (AAIBase* HitActor = Cast<AAIBase>(Hit.GetActor()))
+			{
+				HitActor->TakeDamage();
+			}
+		}
+	}
 
-	DrawDebugCapsule(
-		GetWorld(),
-		End, // End location
-		CapsuleHalfHeight,
-		CapsuleRadius,
-		FQuat::Identity, // No rotation
-		FColor::Red,
-		false,
-		1.0f // Duration
-	);
+}
+
+void AHighscoreJamCharacter::Choke() 
+{
+	ChokeDelay += GetWorld()->GetDeltaSeconds();
+	if (ChokeDelay >= 2) {
+		PlayerStats.Health -= 2;
+		ChokeDelay = 0.0f; // Reset the choke delay
+	}
 }
