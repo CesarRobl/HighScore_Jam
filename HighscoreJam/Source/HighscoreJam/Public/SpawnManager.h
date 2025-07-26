@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "AIBase.h"
 #include "SpawnManager.generated.h"
 
 UCLASS()
@@ -24,6 +25,15 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawner Settings")
 	float MinSpawnDistance = 500.0f; // Minimum distance from the player to spawn enemies
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawner Settings")
+	TArray<TSubclassOf<AAIBase>>EnemyList; // List of enemy classes to spawn
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawner Settings")
+	float SpawnInterval = 5.0f; // Time interval between spawns
+
+	float SavedSpawnInterval; // Variable to save the spawn interval
+
 
 public:	
 	// Called every frame

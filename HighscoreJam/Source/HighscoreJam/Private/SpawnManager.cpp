@@ -20,12 +20,23 @@ void ASpawnManager::BeginPlay()
 	Super::BeginPlay();
 	
 	PickSpawnPoint(); // Call the function to pick a spawn point when the game starts
+	SavedSpawnInterval = SpawnInterval; // Save the initial spawn interval
 }
 
 // Called every frame
 void ASpawnManager::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if(SpawnInterval <= 0.0f)
+	{
+		PickSpawnPoint(); // Call the function to pick a spawn point when the spawn interval is reached
+		SpawnInterval = SavedSpawnInterval; // Reset the spawn interval
+	}
+	else
+	{
+		SpawnInterval -= DeltaTime; // Decrease the spawn interval by the delta time
+	}
 
 }
 
@@ -43,7 +54,7 @@ void ASpawnManager::PickSpawnPoint() {
 	);
 
 	GetWorld()->SpawnActor<AAIBase>(
-		AAIBase::StaticClass(),
+		EnemyList[0],
 		SpawnLocation,
 		FRotator::ZeroRotator // Spawn with no rotation for now
 		);
