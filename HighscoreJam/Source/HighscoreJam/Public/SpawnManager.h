@@ -34,11 +34,29 @@ protected:
 
 	float SavedSpawnInterval; // Variable to save the spawn interval
 
+	int32 SpawnCredits = 0; // Credits for spawning enemies
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spawner Settings")
+	int32 EnemyCount = 10; // Number of enemies to spawn
+
+	int32 MaxEnemyCount = 10; // Maximum number of enemies to spawn at once
+
+	int32 MaxRounds = 5; // Maximum number of rounds to spawn enemies
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spawner Settings")
+	int32 CurrentRound = 0; // Current round number
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawner Settings")
+	float RoundInterval = 30.0f; // Time interval between rounds
+
+	float SavedRoundInterval; // Variable to save the round interval
+
+
 
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	void PickSpawnPoint();
-
+	void WaitNextRound();
 };

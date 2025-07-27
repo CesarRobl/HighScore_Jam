@@ -22,6 +22,9 @@ struct FAIStats {
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 Damage = 5;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 Cost = 1;
 };
 
 UCLASS()
