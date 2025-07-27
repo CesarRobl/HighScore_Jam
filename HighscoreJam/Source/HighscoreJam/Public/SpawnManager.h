@@ -37,9 +37,9 @@ protected:
 	int32 SpawnCredits = 0; // Credits for spawning enemies
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spawner Settings")
-	int32 EnemyCount = 10; // Number of enemies to spawn
+	int32 EnemyCount; // Number of enemies to spawn
 
-	int32 MaxEnemyCount = 10; // Maximum number of enemies to spawn at once
+	int32 MaxEnemyCount = 3; // Maximum number of enemies to spawn at once
 
 	int32 MaxRounds = 5; // Maximum number of rounds to spawn enemies
 

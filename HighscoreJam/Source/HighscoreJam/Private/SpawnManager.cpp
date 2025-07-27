@@ -22,6 +22,7 @@ void ASpawnManager::BeginPlay()
 	PickSpawnPoint(); // Call the function to pick a spawn point when the game starts
 	SavedSpawnInterval = SpawnInterval; // Save the initial spawn interval
 	SavedRoundInterval = RoundInterval; // Save the initial round interval
+	EnemyCount = MaxEnemyCount; // Initialize the enemy count
 }
 
 // Called every frame
@@ -29,7 +30,7 @@ void ASpawnManager::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if(EnemyCount >= MaxEnemyCount)
+	if(EnemyCount <= 0)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("All enemies have been spawned!"));
 		WaitNextRound(); // Call the function to wait for the next round
@@ -82,7 +83,7 @@ void ASpawnManager::WaitNextRound() {
 	RoundInterval -= GetWorld()->GetDeltaSeconds(); // Decrease the round interval by the delta time
 
 	if (RoundInterval <= 0) {
-		EnemyCount = 0;
+		EnemyCount = MaxEnemyCount;
 		MaxEnemyCount += 5; // Increase the maximum enemy count for the next round add Dynamic difficulty scaling here if needed
 	}
 
