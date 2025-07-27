@@ -22,6 +22,9 @@ struct FAIStats {
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 Damage = 5;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 Cost = 1;
 };
 
 UCLASS()
@@ -62,7 +65,7 @@ protected:
 	UPROPERTY(VisibleAnywhere,BlueprintReadOnly)
 	bool bIsAttacking = false; // Flag to check if the AI is currently attacking
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	ACharacter* TargetCharacter;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -82,6 +85,10 @@ public:
 		GetCharacterMovement()->MaxWalkSpeed = AIStats.Speed; // Reset walk speed after attack
 		bIsAttacking = false;
 	}
+
+	UFUNCTION(BlueprintNativeEvent, Blueprintcallable, Category = "AI Actions")
+	void PerformAttack();
+	virtual void PerformAttack_Implementation();
 
 	void TakeDamage();
 	void Die();

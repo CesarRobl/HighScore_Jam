@@ -4,6 +4,7 @@
 #include "AIBase.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "SpawnManager.h"
 
 // Sets default values
 AAIBase::AAIBase()
@@ -17,7 +18,7 @@ void AAIBase::BeginPlay()
 {
 	Super::BeginPlay();
 	SavedDelay = LaserDelay; // Initialize the saved delay time
-	TargetCharacter = Cast<ACharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0)); // Get the player character as the target
+	TargetCharacter = Cast<ACharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 }
 
 // Called every frame
@@ -56,10 +57,18 @@ void AAIBase::Die()
 	UE_LOG(LogTemp, Warning, TEXT("AI has died!"));
 
 	USkeletalMeshComponent* MeshComp = GetMesh();
+
+	ASpawnManager* SpawnManager = Cast<ASpawnManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ASpawnManager::StaticClass()));
+	if (SpawnManager)
+	{
+		
+	}
 	if(MeshComp)
 	{
 		MeshComp->SetSimulatePhysics(true);
 		MeshComp->SetCollisionProfileName(TEXT("Ragdoll"));
+		
+		SpawnManager->SpawnedEnemies--;
 	}
 
 	GetCharacterMovement()->DisableMovement();
@@ -70,7 +79,6 @@ void AAIBase::AttackTarget()
 	if (TargetCharacter && DistanceToTarget() <= AttackRange && !bIsAttacking)
 	{
 		// Perform attack logic here, e.g., apply damage to the target character
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("AI is attacking"));
 
 		bIsAttacking = true;
 		PlayAnimMontage(AttackMontage);
@@ -83,6 +91,19 @@ void AAIBase::AttackTarget()
 			AttackCooldown,
 			false
 		);
+	}
+}
+
+void AAIBase::PerformAttack_Implementation()
+{
+	if (TargetCharacter)
+	{
+		// Logic to apply damage to the target character
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, TEXT("AI performed attack on target"));
+	}
+	else
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("No target to attack"));
 	}
 }
 

@@ -23,7 +23,7 @@ struct FPlayerStats {
 	float WaterDrainRate = 1.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float WaterRefillRate = 2.5f;
+	float WaterRefillRate = 8.5f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float CapsuleRadius = 10.0f;
