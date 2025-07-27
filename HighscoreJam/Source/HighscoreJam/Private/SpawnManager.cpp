@@ -30,7 +30,7 @@ void ASpawnManager::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if(EnemyCount <= 0)
+	if(EnemyCount <= 0 && SpawnedEnemies <= 0)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("All enemies have been spawned!"));
 		WaitNextRound(); // Call the function to wait for the next round
@@ -70,12 +70,8 @@ void ASpawnManager::PickSpawnPoint() {
 		);
 
 	EnemyCount--;
+	SpawnedEnemies++;
 
-	if (EnemyCount <= 0)
-	{
-		CurrentRound++;
-		RoundInterval = SavedRoundInterval; // Reset the round interval after spawning all enemies
-	}
 }
 
 void ASpawnManager::WaitNextRound() {
@@ -83,8 +79,11 @@ void ASpawnManager::WaitNextRound() {
 	RoundInterval -= GetWorld()->GetDeltaSeconds(); // Decrease the round interval by the delta time
 
 	if (RoundInterval <= 0) {
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, TEXT("Next Round!"));
+		CurrentRound++;
 		EnemyCount = MaxEnemyCount;
 		MaxEnemyCount += 5; // Increase the maximum enemy count for the next round add Dynamic difficulty scaling here if needed
+		RoundInterval = SavedRoundInterval; // Reset the round interval after spawning all enemies
 	}
 
 	if(CurrentRound >= MaxRounds) {

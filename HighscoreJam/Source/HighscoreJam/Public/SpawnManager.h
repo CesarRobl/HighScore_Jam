@@ -41,6 +41,8 @@ protected:
 
 	int32 MaxEnemyCount = 3; // Maximum number of enemies to spawn at once
 
+	
+
 	int32 MaxRounds = 5; // Maximum number of rounds to spawn enemies
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spawner Settings")
@@ -56,6 +58,8 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	int32 SpawnedEnemies = 0; // Number of enemies spawned in the current round
 
 	void PickSpawnPoint();
 	void WaitNextRound();
