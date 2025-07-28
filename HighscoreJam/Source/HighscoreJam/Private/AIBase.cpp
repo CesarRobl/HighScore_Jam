@@ -19,6 +19,7 @@ void AAIBase::BeginPlay()
 	Super::BeginPlay();
 	SavedDelay = LaserDelay; // Initialize the saved delay time
 	TargetCharacter = Cast<ACharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+	TargetLocation = TargetCharacter ? TargetCharacter->GetActorLocation() : FVector::ZeroVector;
 }
 
 // Called every frame
@@ -61,14 +62,14 @@ void AAIBase::Die()
 	ASpawnManager* SpawnManager = Cast<ASpawnManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ASpawnManager::StaticClass()));
 	if (SpawnManager)
 	{
-		
+		SpawnManager->SpawnedEnemies--;
 	}
 	if(MeshComp)
 	{
 		MeshComp->SetSimulatePhysics(true);
 		MeshComp->SetCollisionProfileName(TEXT("Ragdoll"));
 		
-		SpawnManager->SpawnedEnemies--;
+		
 	}
 
 	GetCharacterMovement()->DisableMovement();

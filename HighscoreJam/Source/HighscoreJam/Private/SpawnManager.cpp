@@ -64,7 +64,7 @@ void ASpawnManager::PickSpawnPoint() {
 	);
 
 	GetWorld()->SpawnActor<AAIBase>(
-		EnemyList[0],
+		SpawnEnemy(),
 		SpawnLocation,
 		FRotator::ZeroRotator 
 		);

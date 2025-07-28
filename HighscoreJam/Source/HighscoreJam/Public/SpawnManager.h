@@ -7,6 +7,22 @@
 #include "AIBase.h"
 #include "SpawnManager.generated.h"
 
+USTRUCT(BlueprintType)
+struct FEnemyUnlockInfo 
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	TSubclassOf<AAIBase> EnemyClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 UnlockRound = 1;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float SpawnWeight = 1.0f; // Higher = more likely to spawn
+
+};
+
 UCLASS()
 class HIGHSCOREJAM_API ASpawnManager : public AActor
 {
@@ -19,6 +35,9 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawner Settings")
+	TArray<FEnemyUnlockInfo> EnemyUnlocks;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawner Settings")
 	float MaxSpawnDistance = 1000.0f; // Maximum distance from the player to spawn enemies
@@ -41,12 +60,10 @@ protected:
 
 	int32 MaxEnemyCount = 3; // Maximum number of enemies to spawn at once
 
-	
-
 	int32 MaxRounds = 5; // Maximum number of rounds to spawn enemies
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spawner Settings")
-	int32 CurrentRound = 0; // Current round number
+	int32 CurrentRound = 1; // Current round number
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawner Settings")
 	float RoundInterval = 30.0f; // Time interval between rounds
@@ -63,4 +80,31 @@ public:
 
 	void PickSpawnPoint();
 	void WaitNextRound();
+	UClass* SpawnEnemy()
+	{
+		TArray<FEnemyUnlockInfo> EligibleEnemies;
+		float TotalWeight = 0.0f;
+
+		for(const FEnemyUnlockInfo& Info : EnemyUnlocks)
+		{
+			if (CurrentRound >= Info.UnlockRound) {
+				EligibleEnemies.Add(Info);
+				TotalWeight += Info.SpawnWeight;
+			}
+		}
+
+		float RandomValue = FMath::FRandRange(0.0f, TotalWeight);
+		float AccumulatedWeight = 0.0f;
+
+		for (const FEnemyUnlockInfo& UnlockInfo : EnemyUnlocks)
+		{
+			AccumulatedWeight += UnlockInfo.SpawnWeight;
+			if(RandomValue <= AccumulatedWeight)
+			{
+				return UnlockInfo.EnemyClass;
+			}
+		}
+
+		return EligibleEnemies.Last().EnemyClass; // Fallback to the last eligible enemy if none is selected
+	}
 };
