@@ -140,6 +140,7 @@ public:
 
 		if (MeshComp)
 		{
+			MeshComp->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
 			MeshComp->SetSimulatePhysics(true);	
 			MeshComp->SetCollisionProfileName(TEXT("Ragdoll"));
 		}

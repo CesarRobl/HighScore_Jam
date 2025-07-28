@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "GameFrameWork/CharacterMovementComponent.h"
+#include "Components/BoxComponent.h"
 #include "AIBase.generated.h"
 
 USTRUCT(BlueprintType)
@@ -80,6 +81,9 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UBoxComponent* Hitbox;
 
 	UFUNCTION(BlueprintCallable, Category = "AI Actions")
 	void AttackTarget();

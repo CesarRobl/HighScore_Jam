@@ -97,14 +97,23 @@ void AAIBase::AttackTarget()
 
 void AAIBase::PerformAttack_Implementation()
 {
-	if (TargetCharacter)
+	if (Hitbox)
 	{
-		// Logic to apply damage to the target character
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, TEXT("AI performed attack on target"));
-	}
-	else
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("No target to attack"));
+		ECollisionEnabled::Type CurrentCollision = Hitbox->GetCollisionEnabled();
+
+		// If hitbox is already enabled, disable it
+		if (CurrentCollision == ECollisionEnabled::QueryOnly) 
+		{
+			CurrentCollision = ECollisionEnabled::NoCollision;
+		}
+		
+		// If its not already enabled, enable it
+		else if (CurrentCollision == ECollisionEnabled::NoCollision)
+		{
+			CurrentCollision = ECollisionEnabled::QueryOnly;
+		}
+
+		Hitbox->SetCollisionEnabled(CurrentCollision);
 	}
 }
 

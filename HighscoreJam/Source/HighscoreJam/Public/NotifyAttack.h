@@ -16,5 +16,7 @@ class HIGHSCOREJAM_API UNotifyAttack : public UAnimNotify
 
 	public:
 		virtual void Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation) override;	
+
+		
 	
 };
