@@ -43,7 +43,7 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-
+	UFUNCTION(BlueprintCallable, Category = "AI Actions")
 	float DistanceToTarget() const
 	{
 		if (!TargetCharacter) return 0.0f;

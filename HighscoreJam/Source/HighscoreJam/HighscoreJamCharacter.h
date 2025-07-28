@@ -126,6 +126,30 @@ public:
 	{
 		bIsRefilling = bRefilling;
 	}
+
+	UFUNCTION(BlueprintCallable)
+	void TakeDamage(int32 DamageAmount)
+	{
+		PlayerStats.Health -= DamageAmount;
+
+	}
+
+	void Die()
+	{
+		USkeletalMeshComponent* MeshComp = GetMesh();
+
+		if (MeshComp)
+		{
+			MeshComp->SetSimulatePhysics(true);	
+			MeshComp->SetCollisionProfileName(TEXT("Ragdoll"));
+		}
+	}
+
+	UFUNCTION(BlueprintCallable, Category = "Player Actions")
+	bool IsDead() const
+	{
+		return PlayerStats.Health <= 0;
+	}
 };
 
 
