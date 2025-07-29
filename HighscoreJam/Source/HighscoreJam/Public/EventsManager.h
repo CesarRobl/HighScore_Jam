@@ -27,10 +27,26 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<ATurtleChar> TurtleClass;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UEventBase* CurrentEvent;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	bool bIsEventActive = true;
+	
 
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	UFUNCTION(BlueprintNativeEvent,BlueprintCallable)
+	void SwitchEventUI();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void ShowRewardsUI();
+
+	void ShowRewardsUI_Implementation() 
+	{
+		// Default C++ behavior (can be empty)
+	}
 
 };

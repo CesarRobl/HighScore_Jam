@@ -3,6 +3,7 @@
 
 #include "EventsManager.h"
 #include "DefenseEvent.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AEventsManager::AEventsManager()
@@ -20,11 +21,11 @@ void AEventsManager::BeginPlay()
 	CurrentEvent = NewObject<UDefenseEvent>(this);
 	if (CurrentEvent)
 	{
+		bIsEventActive = true; // Set the event as active
 		CurrentEvent->SpawnLocations = SpawnLocations; // Set spawn locations for the event
 		CurrentEvent->TurtleClass = TurtleClass; // Set the turtle class for the event
 		CurrentEvent->StartEvent(GetWorld()); // Start the event
-
-		
+		SwitchEventUI();
 	}
 }
 
@@ -33,5 +34,33 @@ void AEventsManager::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (CurrentEvent)
+	{
+		switch (CurrentEvent->WinState)
+		{
+			case EEventWinState::Win:
+				ShowRewardsUI(); // Show rewards UI
+				UGameplayStatics::SetGamePaused(GetWorld(), true); // Pause the game
+				CurrentEvent = nullptr; // Clear the current event
+				break;
+
+			case EEventWinState::Lose:
+				//Handle lost logic here
+				break;
+
+			default:
+				CurrentEvent->TickEvent(DeltaTime);
+				break;
+		}
+	}
 }
+
+void AEventsManager::SwitchEventUI_Implementation()
+{
+    // Default C++ behavior (can be empty)
+}
+
+
+
+
 

@@ -41,7 +41,7 @@ void AAIBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 }
 
-void AAIBase::TakeDamage() 
+void AAIBase::DealDamage() 
 {
 	LaserDelay -= GetWorld()->GetDeltaSeconds();
 

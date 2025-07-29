@@ -10,6 +10,15 @@
 /**
  * 
  */
+
+UENUM(BlueprintType)
+enum class EEventWinState : uint8
+{
+	None UMETA(DisplayName = "None"),
+	Win UMETA(DisplayName = "Win"),
+	Lose UMETA(DisplayName = "Lose")
+};
+
 UCLASS()
 class HIGHSCOREJAM_API UEventBase : public UObject
 {
@@ -17,12 +26,12 @@ class HIGHSCOREJAM_API UEventBase : public UObject
 
 	public:
 		UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-		float EventTimer = 60;
+		float EventTimer = 10;
 
 		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
 		float EventDuration = 1;
 
-		bool bIsEventActive = false;
+		bool bIsEventActive = true;
 
 		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
 		TSubclassOf<ATurtleChar> TurtleClass;
@@ -31,6 +40,8 @@ class HIGHSCOREJAM_API UEventBase : public UObject
 
 		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
 		TArray<FVector> SpawnLocations;
+
+		EEventWinState WinState = EEventWinState::None;
 
 	public:
 		virtual void StartEvent(UWorld* World);

@@ -103,7 +103,7 @@ public:
 	{
 		// Does nothing
 	}
-		void TakeDamage();
+		void DealDamage();
 		void Die();
 
 		UFUNCTION(BlueprintCallable, Category = "AI Actions")
