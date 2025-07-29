@@ -45,9 +45,8 @@ public:
 			{
 				ATurtleChar* TestTurtle = World->SpawnActor<ATurtleChar>(TurtleClass, SpawnPoints, FRotator::ZeroRotator);
 
-				// Show Test Turtle name in log
+				SpawnedTurtles.Add(TestTurtle);
 
-				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Test Turtle Spawned at: %s"), *SpawnPoints.ToString()));
 			}
 		}
 
@@ -56,12 +55,20 @@ public:
 
 	virtual void TickEvent(float DeltaTime) override
 	{
-		// Custom logic for DefenseEvent tick can be added here
+		if(CheckTurtlesAlive())
+		{
+			EventTimer -= DeltaTime;
+		}
+		else
+		{
+
+		}
 	}
 
 	virtual void EndEvent() override
 	{
-		// Custom logic for DefenseEvent end can be added here
+		SpawnedTurtles.Empty();
+		bIsEventActive = false;
 		UE_LOG(LogTemp, Warning, TEXT("Defense Event Ended"));
 	}
 };

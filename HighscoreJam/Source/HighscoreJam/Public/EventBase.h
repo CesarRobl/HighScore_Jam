@@ -17,13 +17,17 @@ class HIGHSCOREJAM_API UEventBase : public UObject
 
 	public:
 		UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-		float EventTimer;
+		float EventTimer = 60;
 
 		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
 		float EventDuration = 1;
 
+		bool bIsEventActive = false;
+
 		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
 		TSubclassOf<ATurtleChar> TurtleClass;
+
+		TArray<ATurtleChar*> SpawnedTurtles;
 
 		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
 		TArray<FVector> SpawnLocations;
@@ -35,5 +39,14 @@ class HIGHSCOREJAM_API UEventBase : public UObject
 
 		virtual void EndEvent();
 
-	
+		bool CheckTurtlesAlive()
+		{
+			for (ATurtleChar* Turtle : SpawnedTurtles)
+			{
+				if (Turtle->Health >= 0)
+					return true; // If any turtle is alive, return true
+			}
+
+			return false; // otherwise, return false
+		}
 };
