@@ -2,6 +2,7 @@
 
 
 #include "EventsManager.h"
+#include "DefenseEvent.h"
 
 // Sets default values
 AEventsManager::AEventsManager()
@@ -16,6 +17,15 @@ void AEventsManager::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	CurrentEvent = NewObject<UDefenseEvent>(this);
+	if (CurrentEvent)
+	{
+		CurrentEvent->SpawnLocations = SpawnLocations; // Set spawn locations for the event
+		CurrentEvent->TurtleClass = TurtleClass; // Set the turtle class for the event
+		CurrentEvent->StartEvent(GetWorld()); // Start the event
+
+		
+	}
 }
 
 // Called every frame

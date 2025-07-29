@@ -3,25 +3,17 @@
 
 #include "EventBase.h"
 
-// Sets default values
-AEventBase::AEventBase()
+void UEventBase::StartEvent(UWorld* World)
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
-
+	// Default implementation does nothing
 }
 
-// Called when the game starts or when spawned
-void AEventBase::BeginPlay()
+void UEventBase::TickEvent(float DeltaTime)
 {
-	Super::BeginPlay();
-	
+	// Default implementation does nothing
 }
 
-// Called every frame
-void AEventBase::Tick(float DeltaTime)
+void UEventBase::EndEvent()
 {
-	Super::Tick(DeltaTime);
-
+	// Default implementation does nothing
 }
-

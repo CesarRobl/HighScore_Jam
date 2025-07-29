@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "EventBase.h"
+#include "TurtleChar.h"
 #include "EventsManager.generated.h"
 
 UCLASS()
@@ -18,6 +20,14 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FVector> SpawnLocations; // Array of spawn locations for events
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<ATurtleChar> TurtleClass;
+
+	UEventBase* CurrentEvent;
 
 public:	
 	// Called every frame
