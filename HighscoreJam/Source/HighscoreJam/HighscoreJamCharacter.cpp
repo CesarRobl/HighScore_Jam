@@ -68,18 +68,22 @@ void AHighscoreJamCharacter::Tick(float DeltaTime)
 	// Call the base class Tick() function
 	Super::Tick(DeltaTime);
 	// Update player stats
-	if (PlayerStats.Water > 0.0f && !bIsRefilling)
-	{
-		PlayerStats.Water -= DeltaTime * PlayerStats.WaterDrainRate;
-	}
-	else if(PlayerStats.Water <= 0.0f)
-	{
-		Choke();
-	}
+	
 	if (PlayerStats.Health <= 0.0f)
 	{
-		// Handle player death logic here
+		Die();
 		UE_LOG(LogTemplateCharacter, Warning, TEXT("Player has died!"));
+	}
+	else
+	{
+		if (PlayerStats.Water > 0.0f && !bIsRefilling)
+		{
+			PlayerStats.Water -= DeltaTime * PlayerStats.WaterDrainRate;
+		}
+		else if (PlayerStats.Water <= 0.0f)
+		{
+			Choke();
+		}
 	}
 }
 
@@ -198,10 +202,14 @@ void AHighscoreJamCharacter::Shoot()
 }
 
 void AHighscoreJamCharacter::Choke() 
-{
+{		
+
 	ChokeDelay += GetWorld()->GetDeltaSeconds();
 	if (ChokeDelay >= 2) {
 		PlayerStats.Health -= 2;
 		ChokeDelay = 0.0f; // Reset the choke delay
 	}
+
 }
+
+

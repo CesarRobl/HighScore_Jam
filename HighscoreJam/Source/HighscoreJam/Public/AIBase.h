@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "GameFrameWork/CharacterMovementComponent.h"
+#include "Components/BoxComponent.h"
 #include "AIBase.generated.h"
 
 USTRUCT(BlueprintType)
@@ -22,6 +23,9 @@ struct FAIStats {
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 Damage = 5;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 Cost = 1;
 };
 
 UCLASS()
@@ -39,9 +43,9 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-	
 
-	float DistanceToTarget() const 
+	UFUNCTION(BlueprintCallable, Category = "AI Actions")
+	float DistanceToTarget() const
 	{
 		if (!TargetCharacter) return 0.0f;
 
@@ -54,26 +58,32 @@ protected:
 	FTimerHandle AttackTimerHandle; // Timer handle for attack cooldown
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI Stats")
-	float AttackRange = 200.0f; 
+	float AttackRange = 200.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI Stats")
-	float AttackCooldown = 1.0f; 
+	float AttackCooldown = 1.0f;
 
-	UPROPERTY(VisibleAnywhere,BlueprintReadOnly)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	bool bIsAttacking = false; // Flag to check if the AI is currently attacking
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	ACharacter* TargetCharacter;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	FVector TargetLocation;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UAnimMontage* AttackMontage;
 
-public:	
+public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UBoxComponent* Hitbox;
 
 	UFUNCTION(BlueprintCallable, Category = "AI Actions")
 	void AttackTarget();
@@ -83,12 +93,23 @@ public:
 		bIsAttacking = false;
 	}
 
-	void TakeDamage();
-	void Die();
+	UFUNCTION(BlueprintNativeEvent, Blueprintcallable, Category = "AI Actions")
+	void PerformAttack();
+	virtual void PerformAttack_Implementation();
 
-	UFUNCTION(BlueprintCallable, Category = "AI Actions")
-	bool IsDead() const 
+	UFUNCTION(BlueprintNativeEvent, Blueprintcallable, Category = "AI Actions")
+	void UseAbility();
+	virtual void UseAbility_Implementation() 
 	{
-		return AIStats.Health <= 0;
+		// Does nothing
 	}
+		void TakeDamage();
+		void Die();
+
+		UFUNCTION(BlueprintCallable, Category = "AI Actions")
+		bool IsDead() const
+		{
+			return AIStats.Health <= 0;
+		}
+
 };

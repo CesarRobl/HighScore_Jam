@@ -4,6 +4,7 @@
 #include "AIBase.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "SpawnManager.h"
 
 // Sets default values
 AAIBase::AAIBase()
@@ -17,7 +18,8 @@ void AAIBase::BeginPlay()
 {
 	Super::BeginPlay();
 	SavedDelay = LaserDelay; // Initialize the saved delay time
-	TargetCharacter = Cast<ACharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0)); // Get the player character as the target
+	TargetCharacter = Cast<ACharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+	TargetLocation = TargetCharacter ? TargetCharacter->GetActorLocation() : FVector::ZeroVector;
 }
 
 // Called every frame
@@ -56,10 +58,18 @@ void AAIBase::Die()
 	UE_LOG(LogTemp, Warning, TEXT("AI has died!"));
 
 	USkeletalMeshComponent* MeshComp = GetMesh();
+
+	ASpawnManager* SpawnManager = Cast<ASpawnManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ASpawnManager::StaticClass()));
+	if (SpawnManager)
+	{
+		SpawnManager->SpawnedEnemies--;
+	}
 	if(MeshComp)
 	{
 		MeshComp->SetSimulatePhysics(true);
 		MeshComp->SetCollisionProfileName(TEXT("Ragdoll"));
+		
+		
 	}
 
 	GetCharacterMovement()->DisableMovement();
@@ -70,7 +80,6 @@ void AAIBase::AttackTarget()
 	if (TargetCharacter && DistanceToTarget() <= AttackRange && !bIsAttacking)
 	{
 		// Perform attack logic here, e.g., apply damage to the target character
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("AI is attacking"));
 
 		bIsAttacking = true;
 		PlayAnimMontage(AttackMontage);
@@ -83,6 +92,28 @@ void AAIBase::AttackTarget()
 			AttackCooldown,
 			false
 		);
+	}
+}
+
+void AAIBase::PerformAttack_Implementation()
+{
+	if (Hitbox)
+	{
+		ECollisionEnabled::Type CurrentCollision = Hitbox->GetCollisionEnabled();
+
+		// If hitbox is already enabled, disable it
+		if (CurrentCollision == ECollisionEnabled::QueryOnly) 
+		{
+			CurrentCollision = ECollisionEnabled::NoCollision;
+		}
+		
+		// If its not already enabled, enable it
+		else if (CurrentCollision == ECollisionEnabled::NoCollision)
+		{
+			CurrentCollision = ECollisionEnabled::QueryOnly;
+		}
+
+		Hitbox->SetCollisionEnabled(CurrentCollision);
 	}
 }
 

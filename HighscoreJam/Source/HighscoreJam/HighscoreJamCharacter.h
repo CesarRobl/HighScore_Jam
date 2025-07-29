@@ -23,7 +23,7 @@ struct FPlayerStats {
 	float WaterDrainRate = 1.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float WaterRefillRate = 2.5f;
+	float WaterRefillRate = 8.5f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float CapsuleRadius = 10.0f;
@@ -125,6 +125,31 @@ public:
 	void SetRefillState(bool bRefilling)
 	{
 		bIsRefilling = bRefilling;
+	}
+
+	UFUNCTION(BlueprintCallable)
+	void TakeDamage(int32 DamageAmount)
+	{
+		PlayerStats.Health -= DamageAmount;
+
+	}
+
+	void Die()
+	{
+		USkeletalMeshComponent* MeshComp = GetMesh();
+
+		if (MeshComp)
+		{
+			MeshComp->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
+			MeshComp->SetSimulatePhysics(true);	
+			MeshComp->SetCollisionProfileName(TEXT("Ragdoll"));
+		}
+	}
+
+	UFUNCTION(BlueprintCallable, Category = "Player Actions")
+	bool IsDead() const
+	{
+		return PlayerStats.Health <= 0;
 	}
 };
 
