@@ -194,7 +194,7 @@ void AHighscoreJamCharacter::Shoot()
 			
 			if (AAIBase* HitActor = Cast<AAIBase>(Hit.GetActor()))
 			{
-				HitActor->TakeDamage();
+				HitActor->DealDamage();
 			}
 		}
 	}
