@@ -18,15 +18,7 @@ void AEventsManager::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	CurrentEvent = NewObject<UDefenseEvent>(this);
-	if (CurrentEvent)
-	{
-		bIsEventActive = true; // Set the event as active
-		CurrentEvent->SpawnLocations = SpawnLocations; // Set spawn locations for the event
-		CurrentEvent->TurtleClass = TurtleClass; // Set the turtle class for the event
-		CurrentEvent->StartEvent(GetWorld()); // Start the event
-		SwitchEventUI();
-	}
+	
 }
 
 // Called every frame

@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "EventBase.h"
 #include "TurtleChar.h"
+#include "DefenseEvent.h"
 #include "EventsManager.generated.h"
 
 UCLASS()
@@ -33,7 +34,6 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	bool bIsEventActive = true;
 	
-
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -49,4 +49,19 @@ public:
 		// Default C++ behavior (can be empty)
 	}
 
+
+	UFUNCTION(BlueprintCallable, Category = "Events")
+	void SpawnEvent() {
+		CurrentEvent = NewObject<UDefenseEvent>(this);
+		if (CurrentEvent)
+		{
+			bIsEventActive = true; // Set the event as active
+			CurrentEvent->SpawnLocations = SpawnLocations; // Set spawn locations for the event
+			CurrentEvent->TurtleClass = TurtleClass; // Set the turtle class for the event
+			CurrentEvent->StartEvent(GetWorld()); // Start the event
+			SwitchEventUI();
+		}
+	}
+
+	
 };
