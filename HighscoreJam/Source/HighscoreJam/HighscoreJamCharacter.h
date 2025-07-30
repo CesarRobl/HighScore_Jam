@@ -17,7 +17,13 @@ struct FPlayerStats {
 	int32 Health = 10;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 Damage = 5;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float Water = 50.0f;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	float WaterCapacity = 100.0f; 
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	float WaterDrainRate = 1.0f;
@@ -119,6 +125,29 @@ public:
 			PlayerStats.Water = WaterCapacity; // Ensure water does not exceed capacity
 		}
 		UE_LOG(LogTemplateCharacter, Log, TEXT("Water refilled! Current water: %f"), PlayerStats.Water);
+	}
+
+	UFUNCTION(BlueprintCallable)
+	void ApplyStatUpgrade(FString StatName, float Multiplier)
+	{
+		if (StatName == "Health")
+			PlayerStats.Health *= Multiplier;
+		else if (StatName == "Damage")
+			PlayerStats.Damage *= Multiplier;
+		else if (StatName == "Water")
+		{
+			PlayerStats.Water *= Multiplier;
+			PlayerStats.WaterCapacity *= Multiplier;
+		}
+		else if (StatName == "DrainRate")
+			PlayerStats.WaterDrainRate *= Multiplier;
+		else if (StatName == "RefillRate")
+			PlayerStats.WaterRefillRate *= Multiplier;
+		else if (StatName == "CapsuleRadius")
+			PlayerStats.CapsuleRadius *= Multiplier;
+		else if (StatName == "CapsuleHalfHeight")
+			PlayerStats.CapsuleHalfHeight *= Multiplier;
+
 	}
 
 	UFUNCTION(BlueprintCallable)
