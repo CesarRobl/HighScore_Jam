@@ -13,7 +13,7 @@ UCLASS()
 class HIGHSCOREJAM_API UDefenseEvent : public UEventBase
 {
 	GENERATED_BODY()
-	
+	\
 public:
 	virtual void StartEvent(UWorld* World) override
 	{
@@ -46,7 +46,6 @@ public:
 				ATurtleChar* TestTurtle = World->SpawnActor<ATurtleChar>(TurtleClass, SpawnPoints, FRotator::ZeroRotator);
 
 				SpawnedTurtles.Add(TestTurtle);
-
 			}
 		}
 
@@ -55,18 +54,28 @@ public:
 
 	virtual void TickEvent(float DeltaTime) override
 	{
-		if(CheckTurtlesAlive())
-		{
-			EventTimer -= DeltaTime;
-		}
-		else
-		{
+		EventTimer -= DeltaTime;
 
+		//GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Green, FString::Printf(TEXT("Event Timer: %.2f"), EventTimer));
+
+		if (EventTimer <= 0)
+		{
+			if (CheckTurtlesAlive())
+			{
+				// If any turtle is still alive, reset the timer and continue the event
+				WinState = EEventWinState::Win;
+			}
+			else
+			{
+				WinState = EEventWinState::Lose;
+			}
+			EndEvent();
 		}
 	}
 
 	virtual void EndEvent() override
 	{
+		
 		SpawnedTurtles.Empty();
 		bIsEventActive = false;
 		UE_LOG(LogTemp, Warning, TEXT("Defense Event Ended"));
