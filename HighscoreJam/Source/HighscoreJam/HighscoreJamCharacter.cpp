@@ -53,6 +53,8 @@ AHighscoreJamCharacter::AHighscoreJamCharacter()
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
+
+	PlayerStats.WaterCapacity = PlayerStats.Water; // Initialize water capacity to the initial water amount
 }
 
 void AHighscoreJamCharacter::BeginPlay()
@@ -60,7 +62,6 @@ void AHighscoreJamCharacter::BeginPlay()
 	// Call the base class BeginPlay() function
 	Super::BeginPlay();
 
-	WaterCapacity = 50.0f; // Set the maximum water capacity
 }
 
 void AHighscoreJamCharacter::Tick(float DeltaTime)
@@ -191,7 +192,6 @@ void AHighscoreJamCharacter::Shoot()
 	{
 		for (const FHitResult& Hit : HitResults)
 		{
-			
 			if (AAIBase* HitActor = Cast<AAIBase>(Hit.GetActor()))
 			{
 				HitActor->DealDamage();

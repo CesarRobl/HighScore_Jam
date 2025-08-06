@@ -26,10 +26,13 @@ class HIGHSCOREJAM_API UEventBase : public UObject
 
 	public:
 		UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-		float EventTimer = 10;
+		float EventTimer = 3;
 
 		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
 		float EventDuration = 1;
+
+		UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+		float EventWeight = 1.0f;
 
 		bool bIsEventActive = true;
 

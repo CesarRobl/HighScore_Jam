@@ -14,7 +14,7 @@ struct FPlayerStats {
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 Health = 10;
+	float Health = 10;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 Damage = 5;
@@ -98,6 +98,9 @@ protected:
 	//** Called when the player is choked (e.g., out of water) */
 	void Choke();
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player Stats")
+	float HealthCapacity = 10.0f;
+
 	float WaterCapacity = 100.0f; // Maximum water capacity
 	float ChokeDelay = 0.0f; // Delay before choking starts
 	bool bIsRefilling = false; // Flag to check if refilling is in progress
@@ -121,17 +124,21 @@ public:
 	{
 		bIsRefilling = true;
 		PlayerStats.Water += GetWorld()->GetDeltaSeconds() * PlayerStats.WaterRefillRate;
-		if (PlayerStats.Water >= WaterCapacity) {
-			PlayerStats.Water = WaterCapacity; // Ensure water does not exceed capacity
+		if (PlayerStats.Water >= PlayerStats.WaterCapacity) {
+			PlayerStats.Water = PlayerStats.WaterCapacity; // Ensure water does not exceed capacity
 		}
-		UE_LOG(LogTemplateCharacter, Log, TEXT("Water refilled! Current water: %f"), PlayerStats.Water);
+		
 	}
 
 	UFUNCTION(BlueprintCallable)
 	void ApplyStatUpgrade(FString StatName, float Multiplier)
 	{
 		if (StatName == "Health")
+		{
 			PlayerStats.Health *= Multiplier;
+			HealthCapacity *= Multiplier;
+		}
+			
 		else if (StatName == "Damage")
 			PlayerStats.Damage *= Multiplier;
 		else if (StatName == "Water")
@@ -160,7 +167,6 @@ public:
 	void TakeDamage(int32 DamageAmount)
 	{
 		PlayerStats.Health -= DamageAmount;
-
 	}
 
 	void Die()
@@ -179,6 +185,13 @@ public:
 	bool IsDead() const
 	{
 		return PlayerStats.Health <= 0;
+	}
+
+	UFUNCTION(BlueprintCallable)
+	void GetPercentage(float& HealthPercentage, float& WaterPercentage) const
+	{
+		HealthPercentage = PlayerStats.Health / HealthCapacity;
+		WaterPercentage = PlayerStats.Water / PlayerStats.WaterCapacity;
 	}
 };
 
